@@ -10,6 +10,8 @@ Contents of the First Script
 3. f3gid_to_gmsh单元节点编号.xlsx – An Excel spreadsheet explaining the node renumbering rules between FLAC3D and Gmsh.
 4. f3grid_to_msh_finally.py – A Python script that performs the mesh conversion and node reordering.
 5. geo.f3grid – A sample FLAC3D grid file used for demonstration or testing.
-   
+![image](https://github.com/user-attachments/assets/593aa519-9e73-4006-baab-eef92f3e8568)
+![image](https://github.com/user-attachments/assets/c744e542-eef0-4a7b-aac7-024fb82a2f2d)
+
 ---
 **Read this in other languages: [English](README.md), [中文](README_zh.md).**

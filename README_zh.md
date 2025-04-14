@@ -8,6 +8,7 @@
 3. f3gid_to_gmsh单元节点编号.xlsx – Excel 表格，记录节点编号转换规则。
 4. f3grid_to_msh_finally.py – Python 脚本，执行网格转换和节点重排。
 5. geo.f3grid – 示例用 FLAC3D 网格文件。
+![image](https://github.com/user-attachments/assets/593aa519-9e73-4006-baab-eef92f3e8568) ![image](https://github.com/user-attachments/assets/c744e542-eef0-4a7b-aac7-024fb82a2f2d)
 
 ---
 **其他语言版本: [English](README.md), [中文](README_zh.md).**

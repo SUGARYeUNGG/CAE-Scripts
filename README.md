@@ -11,3 +11,4 @@ Contents of the First Script
 4. f3grid_to_msh_finally.py – A Python script that performs the mesh conversion and node reordering.
 5. geo.f3grid – A sample FLAC3D grid file used for demonstration or testing.
 
+**Read this in other languages: [English](README.md), [中文](README_zh.md).**

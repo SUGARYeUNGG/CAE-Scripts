@@ -20,7 +20,9 @@ def read_flac3d(filename):
     vertices = []
     cells = []
     cell_types = []
-    #  输出时 多了一组 单元编号 
+    node_ids = set()  # 用于存储所有节点ID
+    max_node_id = 0   # 记录最大节点ID
+    
     try:
         with open(filename, 'r', encoding='latin-1') as f:
             for line in f:
@@ -33,11 +35,19 @@ def read_flac3d(filename):
                     parts = line.split()
                     if len(parts) >= 4:
                         # 格式: G node_id x y z
-                        # 跳过节点ID，只取坐标
-                        x = float(parts[2])
-                        y = float(parts[3])
-                        z = float(parts[4])
-                        vertices.append([x, y, z])
+                        try:
+                            node_id = int(parts[1])
+                            node_ids.add(node_id)
+                            max_node_id = max(max_node_id, node_id)
+                            
+                            # 跳过节点ID，只取坐标
+                            x = float(parts[2])
+                            y = float(parts[3])
+                            z = float(parts[4])
+                            vertices.append([x, y, z])
+                        except (ValueError, IndexError) as e:
+                            print(f"警告：无法解析节点行: {line}, 错误: {e}")
+                            continue
                 
                 elif line.startswith('Z'):
                     parts = line.split()
@@ -59,6 +69,23 @@ def read_flac3d(filename):
                             cell_types.append(cell_type)
                 
                 # 其他所有行都忽略
+        
+        # 检查节点编号的连续性
+        if node_ids:
+            min_node_id = min(node_ids)
+            missing_ids = []
+            for i in range(min_node_id, max_node_id + 1):
+                if i not in node_ids:
+                    missing_ids.append(i)
+            
+            if missing_ids:
+                print(f"警告：发现 {len(missing_ids)} 个缺失的节点编号")
+                print(f"节点编号范围: {min_node_id} - {max_node_id}")
+                print(f"缺失的节点编号: {missing_ids}")
+            else:
+                print(f"节点编号检查通过：从 {min_node_id} 到 {max_node_id} 的节点编号连续")
+        
+        print(f"读取到 {len(vertices)} 个节点，最大节点编号: {max_node_id}")
     
     except Exception as e:
         print(f"读取FLAC3D文件时出错: {e}")
@@ -157,18 +184,29 @@ def create_fipy_mesh_from_gmsh(gmsh_file):
         mesh = Gmsh3D(gmsh_file)
         
         # 获取网格信息
-        # 注意：vertexCoords、cellCenters和faceCenters已经是NumPy数组，不需要.value属性
         num_cells = len(mesh.cellCenters[0])
-        num_faces = len(mesh.faceCenters[0])
         num_vertices = len(mesh.vertexCoords[0])
         
-        print(f"FiPy网格创建成功: {num_cells} 个单元, {num_faces} 个面, {num_vertices} 个顶点")
+        # 检查网格质量
+        print("检查网格质量...")
+        
+        # 检查单元体积
+        cell_volumes = mesh.cellVolumes
+        zero_volume_cells = np.sum(cell_volumes <= 0)
+        if zero_volume_cells > 0:
+            print(f"警告：发现 {zero_volume_cells} 个零体积或负体积单元")
+        # 检查节点坐标
+        vertex_coords = mesh.vertexCoords
+        nan_vertices = np.sum(np.isnan(vertex_coords))
+        if nan_vertices > 0:
+            print(f"警告：发现 {nan_vertices} 个包含NaN值的节点坐标")
+        
+        print(f"FiPy网格创建成功: {num_cells} 个单元,  {num_vertices} 个顶点")
         return mesh
     except Exception as e:
         print(f"从Gmsh文件创建FiPy网格时出错: {e}")
         traceback.print_exc()
         return None
-
 
 def f3grid_2_msh(filename,output_filename):
     try:
@@ -274,5 +312,5 @@ def convert_msh_node_order(input_file, output_file):
 
 
 if __name__ == "__main__":
-    f3grid_2_msh("input.f3grid","convert.msh")
-    convert_msh_node_order("convert.msh", "output.msh")
+    f3grid_2_msh("geo.f3grid","convert.msh")
+    convert_msh_node_order("convert.msh", "output_geo.msh")

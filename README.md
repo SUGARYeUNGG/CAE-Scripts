@@ -13,5 +13,7 @@ Contents of the First Script
 ![image](https://github.com/user-attachments/assets/593aa519-9e73-4006-baab-eef92f3e8568)
 ![image](https://github.com/user-attachments/assets/c744e542-eef0-4a7b-aac7-024fb82a2f2d)
 
+
+6. Alpha Shapes algorithm.cs  
 ---
 **Read this in other languages: [English](README.md), [中文](README_zh.md).**
